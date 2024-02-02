@@ -1,8 +1,8 @@
 const BUTTON_VALUE = 4;
 const btns = [];
-let oddClicked = 0;
-let evenClicked = 0;
 const promises = [];
+const selectedIndexes = [];
+const selectedEvenIndexes = [];
 
 for (let i = 1; i <= BUTTON_VALUE; i++) {
     const btnEl = document.createElement('button');
@@ -13,39 +13,29 @@ for (let i = 1; i <= BUTTON_VALUE; i++) {
 
     const btnPromise = new Promise(resolve => {
         btnEl.addEventListener('click', function () {
-            if (!btnEl.classList.contains('button-shadow')) {
-                addShadow(i);
-                btns.splice(btns.indexOf(btnEl), 1);
-                resolve(i);
-            }
+            addShadow(i);
+            resolve(i);
         });
     });
 
     promises.push(btnPromise);
 }
 
-Promise.all(promises).then(() => {
-    alert("Всі кнопки були натиснуті!");
+Promise.all(promises).then(indexes => {
+    selectedIndexes.push(...indexes);
+    const evenSelectedIndexes = selectedIndexes.filter(index => index % 2 === 0);
+    selectedEvenIndexes.push(...evenSelectedIndexes);
+    if (evenSelectedIndexes.length === BUTTON_VALUE / 2) {
+        alert("Всі четні кнопки були натиснуті!");
+    }
+    if (evenSelectedIndexes.length !== BUTTON_VALUE / 2) {
+        alert("Не всі четні кнопки були натиснуті.");
+    }
+    if (selectedIndexes.length === BUTTON_VALUE) {
+        alert("Всі кнопки були натиснуті!");
+    }
 });
 
 function addShadow(index) {
-    if (index % 2 === 0) {
-        btns[index - 1].classList.add('button-shadow');
-        evenClicked++;
-    } else {
-        btns[index - 1].classList.add('button-shadow');
-        oddClicked++;
-    }
-
-    checkAllButtonsClicked();
-}
-
-function checkAllButtonsClicked() {
-    if (oddClicked === BUTTON_VALUE / 2) {
-        alert("Всі непарні кнопки були натиснуті!");
-    }
-
-    if (evenClicked === BUTTON_VALUE / 2) {
-        alert("Всі парні кнопки були натиснуті!");
-    }
+    btns[index - 1].classList.add('button-shadow');
 }
